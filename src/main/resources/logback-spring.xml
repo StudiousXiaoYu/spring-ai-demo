@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <property name="defPath" value="logs/"/>
+    <property name="defPattern" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [TxId:%X{PtxId}] [SpanId:%X{PspanId}] |%-5level [%thread] %c [%L] -| %msg%n"/>
+    <property name="defPerSize" value="100MB"/>
+    <property name="defTotalSize" value="2GB"/>
+    <property name="defKeepDays" value="15"/>
+    <logger name="org.springframework.ws.client.MessageTracing.sent" level="TRACE"/>
+    <logger name="org.springframework.ws.client.MessageTracing.received" level="TRACE"/>
+    <logger name="org.springframework.ws.server.MessageTracing" level="TRACE"/>
+    <logger name="com.yonyou" level="debug"/>
+    <!-- 控制台打印 -->
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${defPattern}</pattern>
+        </encoder>
+    </appender>
+    <!--  记录系统核心运行环节的日志，包括错误信息 -->
+    <appender name="demoLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${defPath}/logs.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${defPath}/%d{yyyy-MM-dd}/logs.log.%i.gz</fileNamePattern>
+            <maxFileSize>${defPerSize}</maxFileSize>
+            <maxHistory>${defKeepDays}</maxHistory>
+            <totalSizeCap>${defTotalSize}</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${defPattern}</pattern>
+        </encoder>
+    </appender>
+    <!-- 仅仅额外记录系统各个环节的错误信息 -->
+    <appender name="demoErrorLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${defPath}/error.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${defPath}/%d{yyyy-MM-dd}/error.log.%i.gz</fileNamePattern>
+            <maxFileSize>${defPerSize}</maxFileSize>
+            <maxHistory>${defKeepDays}</maxHistory>
+            <totalSizeCap>${defTotalSize}</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${defPattern}</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <!-- 日志级别,如果想看细节需要配置成DEBUG -->
+    <root level="DEBUG">
+        <appender-ref ref="console"/>
+        <appender-ref ref="demoLog"/>
+        <appender-ref ref="demoErrorLog"/>
+    </root>
+</configuration>
