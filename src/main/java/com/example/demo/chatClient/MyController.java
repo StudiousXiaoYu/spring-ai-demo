@@ -1,6 +1,8 @@
 package com.example.demo.chatClient;
 
 import com.example.demo.chatClient.domain.record.ActorFilms;
+import com.example.demo.chatClient.domain.record.MyChatClientWithParam;
+import com.example.demo.chatClient.domain.record.MyChatClientWithSystem;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.converter.BeanOutputConverter;
@@ -10,19 +12,32 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * 本控制器主要是展示如何使用Spring AI的ChatClient，本示例中，使用了Spring AI的智普模型。
+ * 如果想看细节日志，务必将日志级别调整至DEBUG
+ */
 @Slf4j
 @RestController
 class MyController {
 
+    // 注入带有系统文本的ChatClient
+    private final ChatClient myChatClientWithSystem;
+
+    // 注入系统文本带有参数的ChatClient
+    private final ChatClient myChatClientWithParam;
+
     /**
-     * 可以选择自动注入、也可以在方法内自定义
+     * 可以选择自动注入、也可以在方法内自定义，此客户端无系统文本
      */
     private final ChatClient chatClient;
 
-    public MyController(ChatClient.Builder chatClientBuilder) {
+    public MyController(ChatClient.Builder chatClientBuilder, MyChatClientWithSystem myChatClient, MyChatClientWithParam myChatClientWithParam) {
         this.chatClient = chatClientBuilder.build();
+        this.myChatClientWithSystem = myChatClient.client();
+        this.myChatClientWithParam = myChatClientWithParam.client();
     }
 
     /**
@@ -103,5 +118,25 @@ class MyController {
         List<ActorFilms> actorFilms = converter.convert(content);
         log.info("actorFilms: {}", actorFilms);
         return flux;
+    }
+
+    /**
+     * 使用带有系统信息的client，当前用户输入后，返回一个map类型的回答，key为completion，value为回答
+     * @param message  用户输入
+     * @return
+     */
+    @GetMapping("/ai-withSystemClient")
+    Map<String, String> generationByTextWithSystemClient(String message) {
+        return Map.of("completion", myChatClientWithSystem.prompt().user(message).call().content());
+    }
+
+    /**
+     * 使用系统带有参数信息的client，当前用户输入后，返回一个map类型的回答，key为completion，value为回答
+     * @param message  用户输入
+     * @return
+     */
+    @GetMapping("/ai-withParamClient")
+    Map<String, String> generationByTextWithParamClient(String message, String user) {
+        return Map.of("completion", myChatClientWithParam.prompt().system(sp ->sp.param("user",user)).user(message).call().content());
     }
 }
