@@ -3,9 +3,18 @@ package com.example.demo.chatClient;
 import com.example.demo.chatClient.domain.record.ActorFilms;
 import com.example.demo.chatClient.domain.record.MyChatClientWithParam;
 import com.example.demo.chatClient.domain.record.MyChatClientWithSystem;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
+import org.springframework.ai.chat.client.advisor.QuestionAnswerAdvisor;
+import org.springframework.ai.chat.memory.ChatMemory;
+import org.springframework.ai.chat.memory.InMemoryChatMemory;
+import org.springframework.ai.chat.messages.AssistantMessage;
+import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.converter.BeanOutputConverter;
+import org.springframework.ai.vectorstore.SearchRequest;
+import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,6 +32,8 @@ import java.util.stream.Collectors;
 @RestController
 class MyController {
 
+    private final ChatMemory chatMemory = new InMemoryChatMemory();
+
     // 注入带有系统文本的ChatClient
     private final ChatClient myChatClientWithSystem;
 
@@ -38,6 +49,7 @@ class MyController {
         this.chatClient = chatClientBuilder.build();
         this.myChatClientWithSystem = myChatClient.client();
         this.myChatClientWithParam = myChatClientWithParam.client();
+
     }
 
     /**
@@ -139,4 +151,24 @@ class MyController {
     Map<String, String> generationByTextWithParamClient(String message, String user) {
         return Map.of("completion", myChatClientWithParam.prompt().system(sp ->sp.param("user",user)).user(message).call().content());
     }
+
+    /**
+     * 当前用户输入后，返回一个文本类型的回答
+     * 在此示例中，将对矢量数据库中的所有文档执行相似性搜索。
+     * @param userInput
+     * @return
+     */
+    @GetMapping("/ai-chatMemory")
+    String generationByChatMemory(HttpServletRequest request, String userInput) {
+        String sessionId = request.getSession().getId();
+        chatMemory.add(sessionId, new UserMessage(userInput));
+        String content = this.chatClient.prompt()
+                .advisors(new MessageChatMemoryAdvisor(chatMemory))
+                .user(userInput)
+                .call()
+                .content();
+        chatMemory.add(sessionId, new AssistantMessage(content));
+        return content;
+    }
+
 }
