@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @RestController
-class MyController {
+class ChatClientController {
 
     private final ChatMemory chatMemory = new InMemoryChatMemory();
 
@@ -42,7 +42,7 @@ class MyController {
      */
     private final ChatClient chatClient;
 
-    public MyController(ChatClient.Builder chatClientBuilder, MyChatClientWithSystem myChatClient, MyChatClientWithParam myChatClientWithParam) {
+    public ChatClientController(ChatClient.Builder chatClientBuilder, MyChatClientWithSystem myChatClient, MyChatClientWithParam myChatClientWithParam) {
         this.chatClient = chatClientBuilder.build();
         this.myChatClientWithSystem = myChatClient.client();
         this.myChatClientWithParam = myChatClientWithParam.client();
