@@ -1,11 +1,18 @@
 # 本项目
 
-仅供学习参考，并无其他目的。欢迎大家star！🌟
+本项目仅供学习参考。欢迎大家star学习！🌟
+Spring AI 官方文档地址：https://docs.spring.io/spring-ai/reference/index.html
 
 ## 项目功能计划
 
 - 基本聊天(具有流式/非流式对话、基于system（含参/无参）对话、聊天记忆)
 - 持续优化中......
+
+## 项目环境依赖
+
+- JDK17
+- maven3
+- 开发的平台api-key(目前支持平台：国内模型有Kimi、千帆、智普以及国外常见模型)
 
 # 关于我
 
