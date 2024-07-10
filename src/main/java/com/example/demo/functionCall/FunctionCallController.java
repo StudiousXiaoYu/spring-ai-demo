@@ -36,7 +36,10 @@ public class FunctionCallController {
         log.info("Response: {}", response);
         return response.toString();
     }
-    
+    /**
+     * 这里自动注入函数回调
+     * 使用chatmodel的call方法
+     */
     @GetMapping("/weather-call-register")
     public String weatherCallByRegister(String location) {
         UserMessage userMessage = new UserMessage(location);
