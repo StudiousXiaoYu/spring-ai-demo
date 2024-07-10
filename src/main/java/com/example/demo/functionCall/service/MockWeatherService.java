@@ -2,8 +2,6 @@ package com.example.demo.functionCall.service;
 
 import java.util.function.Function;
 
-import org.springframework.context.annotation.Description;
-
 import com.example.demo.functionCall.service.MockWeatherService.Request;
 import com.example.demo.functionCall.service.MockWeatherService.Response;
 

@@ -43,7 +43,7 @@ public class FunctionCaConfig {
 
     return FunctionCallbackWrapper.builder(new MockWeatherService())
         .withName("CurrentWeather") // (1) function name
-        .withDescription("获取指定地点的天气情况，location：代表的是地址") // (2) function description
+        .withDescription("获取指定地点的天气情况") // (2) function description
         .build();
 	}
 }

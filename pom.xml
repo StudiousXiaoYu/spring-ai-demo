@@ -50,26 +50,26 @@
 <!--			<groupId>org.springframework.ai</groupId>-->
 <!--			<artifactId>spring-ai-openai-spring-boot-starter</artifactId>-->
 <!--		</dependency>-->
-		<!--		百度千帆-->
-<!--		<dependency>-->
-<!--			<groupId>org.springframework.ai</groupId>-->
-<!--			<artifactId>spring-ai-qianfan-spring-boot-starter</artifactId>-->
-<!--		</dependency>-->
 		<!--		智普ai-->
-		<!-- <dependency>
+		<dependency>
 			<groupId>group.springframework.ai</groupId>
 			<artifactId>spring-ai-zhipuai-spring-boot-starter</artifactId>
-		</dependency> -->
+		</dependency>
 		<!--		kimi ai-->
 		<!-- <dependency>
 			<groupId>group.springframework.ai</groupId>
 			<artifactId>spring-ai-moonshot-spring-boot-starter</artifactId>
 		</dependency> -->
 		<!--		千帆 ai-->
-		<dependency>
+		<!-- <dependency>
 			<groupId>group.springframework.ai</groupId>
 			<artifactId>spring-ai-qianfan-spring-boot-starter</artifactId>
-		</dependency>
+		</dependency> -->
+		<!--		minimax ai-->
+		<!-- <dependency>
+			<groupId>group.springframework.ai</groupId>
+			<artifactId>spring-ai-minimax-spring-boot-starter</artifactId>
+		</dependency> -->
 		<dependency>
 			<groupId>com.github.xiaoymin</groupId>
 			<artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
