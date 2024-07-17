@@ -1,5 +1,7 @@
 package com.example.demo.chatClient;
 
+import com.example.demo.chatClient.domain.po.ChatDataPO;
+import com.example.demo.chatClient.domain.po.ChildData;
 import com.example.demo.chatClient.domain.record.ActorFilms;
 import com.example.demo.chatClient.domain.record.MyChatClientWithParam;
 import com.example.demo.chatClient.domain.record.MyChatClientWithSystem;
@@ -14,6 +16,8 @@ import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.converter.BeanOutputConverter;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 
@@ -54,12 +58,15 @@ class ChatClientController {
      * @param userInput
      * @return
      */
-    @GetMapping("/ai")
-    String generationByText(String userInput) {
-        return this.chatClient.prompt()
-            .user(userInput)
-            .call()
-            .content();
+    @PostMapping("/ai")
+    ChatDataPO generationByText(@RequestParam("userInput")  String userInput) {
+        String content = this.myChatClientWithSystem.prompt()
+                    .user(userInput)
+                    .call()
+                    .content();
+        log.info("content: {}", content);
+        ChatDataPO chatDataPO = ChatDataPO.builder().code("text").data(ChildData.builder().text(content).build()).build();;
+        return chatDataPO;
     }
 
     /**
@@ -155,17 +162,19 @@ class ChatClientController {
      * @param userInput
      * @return
      */
-    @GetMapping("/ai-chatMemory")
-    String generationByChatMemory(HttpServletRequest request, String userInput) {
+    @PostMapping("/ai-chatMemory")
+    ChatDataPO generationByChatMemory(HttpServletRequest request,@RequestParam("userInput")  String userInput) {
         String sessionId = request.getSession().getId();
         chatMemory.add(sessionId, new UserMessage(userInput));
-        String content = this.chatClient.prompt()
+        String content = this.myChatClientWithSystem.prompt()
                 .advisors(new MessageChatMemoryAdvisor(chatMemory))
                 .user(userInput)
                 .call()
                 .content();
         chatMemory.add(sessionId, new AssistantMessage(content));
-        return content;
+        log.info("content: {}", content);
+        ChatDataPO chatDataPO = ChatDataPO.builder().code("text").data(ChildData.builder().text(content).build()).build();;
+        return chatDataPO;
     }
 
 }

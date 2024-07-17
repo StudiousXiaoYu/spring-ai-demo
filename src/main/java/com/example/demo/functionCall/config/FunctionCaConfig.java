@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Description;
 import com.example.demo.functionCall.service.MockWeatherService;
 import com.fasterxml.jackson.annotation.JsonClassDescription;
 
-@Configuration
+// @Configuration
 public class FunctionCaConfig {
 
     /**
