@@ -103,9 +103,9 @@ class ChatClientController {
      * @return
      */
     @GetMapping("/ai-stream")
-    Flux<String> generationByStream() {
+    Flux<String> generationByStream(@RequestParam("userInput") String userInput) {
         Flux<String> output = chatClient.prompt()
-                .user("Tell me a joke")
+                .user(userInput)
                 .stream()
                 .content();
         return output;
